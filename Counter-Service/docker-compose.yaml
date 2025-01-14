@@ -1,0 +1,6 @@
+services:
+  backend:
+    build: .
+    container_name: counter
+    ports:
+    - '8082:8082'
