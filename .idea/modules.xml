@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Counter-Service.iml" filepath="$PROJECT_DIR$/.idea/Counter-Service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Counter-Service/Counter-Service.iml" filepath="$PROJECT_DIR$/Counter-Service/Counter-Service.iml" />
     </modules>
   </component>
 </project>

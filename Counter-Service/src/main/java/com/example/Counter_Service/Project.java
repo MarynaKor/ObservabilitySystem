@@ -3,6 +3,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.List;
 @Getter
 @Setter
@@ -19,5 +23,16 @@ public class Project {
     private int active_project_days;
     private List<PersonProjectPosition> personProjectPosition;
 
+    public long countedDaysFromTheBeginning() {
+        if (ending_at == null) {
+            Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+            LocalDate starDate = starting_at.toLocalDateTime().toLocalDate();
+            LocalDate endDate = currentDate.toLocalDateTime().toLocalDate();
+            return ChronoUnit.DAYS.between(starDate, endDate);
+        }else{
+            return 2;
+            }
+
+     }
 
 }

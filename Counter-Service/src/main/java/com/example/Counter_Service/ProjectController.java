@@ -15,6 +15,6 @@ public class ProjectController {
     @GetMapping("/counter/{projectId}")
     public Mono<String> createProject(@PathVariable String projectId) {
         return projectServiceClient.getProjectById(projectId)
-                .map(project -> "so many days have passed: " + project.getActive_project_days() + " in the Project " + project.getDescription());
+                .map(project -> "so many days have passed: " + project.countedDaysFromTheBeginning() + " in the Project " + project.getDescription());
     }
 }
