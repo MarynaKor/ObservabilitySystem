@@ -24,15 +24,17 @@ public class Project {
     private List<PersonProjectPosition> personProjectPosition;
 
     public long countedDaysFromTheBeginning() {
+        LocalDate starDate = starting_at.toLocalDateTime().toLocalDate();
         if (ending_at == null) {
             Timestamp currentDate = new Timestamp(System.currentTimeMillis());
-            LocalDate starDate = starting_at.toLocalDateTime().toLocalDate();
             LocalDate endDate = currentDate.toLocalDateTime().toLocalDate();
             return ChronoUnit.DAYS.between(starDate, endDate);
-        }else{
-            return 2;
-            }
-
+        }else {
+            LocalDate endDate = ending_at.toLocalDateTime().toLocalDate();
+            return ChronoUnit.DAYS.between(starDate, endDate);
+        }
      }
+
+
 
 }
