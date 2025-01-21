@@ -20,7 +20,7 @@ public class Project {
     private String description;
     private Timestamp starting_at;
     private Timestamp ending_at;
-    private int active_project_days;
+    private long active_project_days;
     private List<PersonProjectPosition> personProjectPosition;
 
     public long countedDaysFromTheBeginning() {
