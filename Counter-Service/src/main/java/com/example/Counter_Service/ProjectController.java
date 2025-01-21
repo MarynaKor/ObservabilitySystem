@@ -29,19 +29,25 @@ public class ProjectController {
     @GetMapping("/overwrite/{projectId}")
     public Mono<Project> getAndUpdateProject(@PathVariable Integer projectId) {
         Mono<Project> projectUpdate = projectServiceClient.getProjectById(projectId);
-        Mono<Long> newActiveDays = projectServiceClient.getProjectById(projectId).map(Project::countedDaysFromTheBeginning);
+        long newActiveDays = projectServiceClient.getNewDaysAmount(projectId);
         Project updatedProject = projectUpdate.block();
         assert updatedProject != null;
-        updatedProject.setActive_project_days(newActiveDays.block());
+        updatedProject.setActive_project_days(newActiveDays);
         return projectServiceClient.updateProject(updatedProject);
     }
 
     @GetMapping("/overwrite/projects")
-    public void getAndUpdateProjects() {
+    public Mono<Project> getAndUpdateProjects() {
          int[] projectIds = new int[]{projectServiceClient.getProjectsId()};
          for(Integer i : projectIds) {
-             getAndUpdateProject(i);
+             Mono<Project> projectUpdate = projectServiceClient.getProjectById(i);
+             long newActiveDays = projectServiceClient.getNewDaysAmount(i);
+             Project updatedProject = projectUpdate.block();
+             assert updatedProject != null;
+             updatedProject.setActive_project_days(newActiveDays);
+             return projectServiceClient.updateProject(updatedProject);
          }
+        return null;
     }
 
 

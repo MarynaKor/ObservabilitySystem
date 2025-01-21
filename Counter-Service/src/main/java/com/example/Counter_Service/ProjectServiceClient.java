@@ -42,15 +42,23 @@ public class ProjectServiceClient {
     }
 
     public int getProjectsId() {
-        return  Objects.requireNonNull(webClient.get()
+        return Objects.requireNonNull(webClient.get()
                         .uri(projectServiceUrl + "/projects")
                         .retrieve()
                         .bodyToFlux(Project.class)
-                        .blockFirst())
-                .getId();
+                        .blockFirst()).getId();
     }
 
+    public long getNewDaysAmount(Integer projectId) {
+        return Objects.requireNonNull(webClient.get()
+                        .uri(projectServiceUrl + "/" + projectId)
+                        .retrieve()
+                        .bodyToMono(Project.class)
+                        .block())
+                .countedDaysFromTheBeginning();
 
+        //arbeite mit stream
+    }
 
     public Mono<Project> updateProject(Project project){
         return webClient.put()
