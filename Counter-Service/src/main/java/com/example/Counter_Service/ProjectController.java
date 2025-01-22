@@ -25,9 +25,9 @@ public class ProjectController {
     }
 
     @GetMapping("/counter/{projectId}")
-    public Mono<String> createProject(@PathVariable Integer projectId) {
-        return projectServiceClient.getProjectById(projectId)
-                .map(project -> "Amount of active days in the project: " + project.countedDaysFromTheBeginning() + " in the Project:  " + project.getTitle());
+    public String createProject(@PathVariable Integer projectId) {
+        Project projectById = projectServiceClient.getProjectById(projectId);
+        return "Amount of active days in the project: " + projectById.countedDaysFromTheBeginning() + " in the Project:  " + projectById.getTitle();
     }
 
     @GetMapping("/counter/projects")
@@ -37,12 +37,11 @@ public class ProjectController {
     //change return type to project
     @GetMapping("/overwrite/{projectId}")
     public Mono<Project> getAndUpdateProject(@PathVariable Integer projectId) {
-        Mono<Project> projectUpdate = projectServiceClient.getProjectById(projectId);
+        Project projectUpdate = projectServiceClient.getProjectById(projectId);
         long newActiveDays = projectServiceClient.getNewDaysAmount(projectId);
-        Project updatedProject = projectUpdate.block();
-        assert updatedProject != null;
-        updatedProject.setActive_project_days(newActiveDays);
-        return projectServiceClient.updateProject(updatedProject);
+        assert projectUpdate != null;
+        projectUpdate.setActive_project_days(newActiveDays);
+        return projectServiceClient.updateProject(projectUpdate);
     }
 
     //Project project
@@ -51,13 +50,12 @@ public class ProjectController {
         Flux<Project> allUpdatedProjects = null;
         Iterable<Integer> iDS = projectServiceClient.getAllProjectsIds();
         for (Integer id : iDS) {
-            Mono<Project> projectUpdate = projectServiceClient.getProjectById(id);
+            Project projectUpdate = projectServiceClient.getProjectById(id);
             long newActiveDays = projectServiceClient.getNewDaysAmount(id);
-            Project updatedProject = projectUpdate.block();
-            assert updatedProject != null;
-            updatedProject.setActive_project_days(newActiveDays);
-            System.out.println(updatedProject.getActive_project_days());
-            allUpdatedProjects = Flux.just(updatedProject);
+            assert projectUpdate != null;
+            projectUpdate.setActive_project_days(newActiveDays);
+            System.out.println(projectUpdate.getActive_project_days());
+            allUpdatedProjects = Flux.just(projectUpdate);
 
         }
 

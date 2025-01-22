@@ -25,11 +25,12 @@ public class ProjectServiceClient {
 
     }
 
-    public Mono<Project> getProjectById(Integer projectId) {
+    public Project getProjectById(Integer projectId) {
         return webClient.get()
                 .uri(projectServiceUrl + "/" + projectId)
                 .retrieve()
-                .bodyToMono(Project.class); //arbeite mit stream
+                .bodyToMono(Project.class)
+                .block(); //arbeite mit stream
     }
 
     public Flux<Project> getAllProjects() {
