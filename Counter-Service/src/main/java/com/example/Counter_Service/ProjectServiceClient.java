@@ -7,7 +7,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Array;
 import java.util.Objects;
 
 //constructed after that but I needed a parameter url to be able to change that easily
@@ -41,6 +40,15 @@ public class ProjectServiceClient {
 
     }
 
+    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
+        return webClient.get()
+                .uri(projectServiceUrl + "/projects")
+                .retrieve()
+                .bodyToFlux(Project.class)
+                .map(Project::getId)
+                .toIterable();
+    }
+
     public int getProjectsId() {
         return Objects.requireNonNull(webClient.get()
                         .uri(projectServiceUrl + "/projects")
@@ -48,6 +56,9 @@ public class ProjectServiceClient {
                         .bodyToFlux(Project.class)
                         .blockFirst()).getId();
     }
+    //How to retrieve all the id's and not the first or last one
+    //Flux.just(new ArrayList<>())
+    //  .flatMap(Flux::fromIterable); and save in a array[]
 
     public long getNewDaysAmount(Integer projectId) {
         return Objects.requireNonNull(webClient.get()

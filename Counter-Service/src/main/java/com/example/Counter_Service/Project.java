@@ -23,6 +23,8 @@ public class Project {
     private long active_project_days;
     private List<PersonProjectPosition> personProjectPosition;
 
+
+    //shoudl I set the varaible immediatly equal the equation or leave as a return for the function
     public long countedDaysFromTheBeginning() {
         LocalDate starDate = starting_at.toLocalDateTime().toLocalDate();
         if (ending_at == null) {
