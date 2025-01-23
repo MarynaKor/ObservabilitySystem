@@ -1,13 +1,10 @@
 package com.example.Counter_Service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
-import java.util.Objects;
+import java.util.List;
 
 //constructed after that but I needed a parameter url to be able to change that easily
 //https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/html/boot-features-webclient.html
@@ -16,32 +13,37 @@ import java.util.Objects;
 @Service
 public class ProjectServiceClient {
 
-    private final WebClient webClient;
+    private final RestClient restClient;
+    //private final WebClient webClient;
     private final String projectServiceUrl;
 
-    public ProjectServiceClient(WebClient.Builder webClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
+    /*public ProjectServiceClient(WebClient.Builder webClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
         this.webClient= webClientBuilder.baseUrl(projectServiceUrl).build();
         this.projectServiceUrl = projectServiceUrl;
+    }*/
+    RestClient defaultClient = RestClient.create();
 
+    public ProjectServiceClient(RestClient.Builder restClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
+        this.restClient = restClientBuilder.baseUrl(projectServiceUrl).build();
+        this.projectServiceUrl = projectServiceUrl;
     }
 
     public Project getProjectById(Integer projectId) {
-        return webClient.get()
+        return restClient.get()
                 .uri(projectServiceUrl + "/" + projectId)
                 .retrieve()
-                .bodyToMono(Project.class)
-                .block(); //arbeite mit stream
+                .body(Project.class);//arbeite mit stream
     }
 
-    public Flux<Project> getAllProjects() {
-        return webClient.get()
+    public List getAllProjects() {
+        return (restClient.get()
                 .uri(projectServiceUrl + "/projects")
                 .retrieve()
-                .bodyToFlux(Project.class);
+                .body(List.class));
 
     }
 
-    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
+/*    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
         return webClient.get()
                 .uri(projectServiceUrl + "/projects")
                 .retrieve()
@@ -79,5 +81,5 @@ public class ProjectServiceClient {
                 .bodyValue(project)
                 .retrieve()
                 .bodyToMono(Project.class);
-    }
+    }*/
 }
