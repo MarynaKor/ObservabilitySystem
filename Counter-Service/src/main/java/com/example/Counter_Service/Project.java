@@ -1,13 +1,9 @@
 package com.example.Counter_Service;
-import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.context.annotation.Bean;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 import java.util.List;
 @Getter
 @Setter

@@ -14,7 +14,7 @@ import java.util.List;
 //https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/web-reactive.html#webflux-client-retrieve
 
 @Service
-public class ProjectServiceClient {
+public class PositionServiceClient {
 
     private final RestClient restClient;
 
@@ -22,36 +22,24 @@ public class ProjectServiceClient {
 
     RestClient defaultClient = RestClient.create();
 
-    public ProjectServiceClient(RestClient.Builder restClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
+    public PositionServiceClient(RestClient.Builder restClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
         this.restClient = restClientBuilder.baseUrl(projectServiceUrl).build();
         this.projectServiceUrl = projectServiceUrl;
     }
 
-    public Project getProjectById(Integer projectId) {
+    public PersonProjectPosition getPositionById(Integer positionId) {
         return restClient.get()
-                .uri(projectServiceUrl + "/project/" + projectId)
+                .uri(projectServiceUrl + "/position/" + positionId)
                 .retrieve()
-                .body(Project.class);//arbeite mit stream
+                .body(PersonProjectPosition.class);//arbeite mit stream
     }
 
-    // first array maybe later a List
-    public List<Project> getAllProjects() {
-        Project[] projects = restClient.get()
-                .uri(projectServiceUrl + "/projects")
-                .retrieve()
-                .body(Project[].class);
-        assert projects != null;
-        return Arrays.asList(projects);
-
-    }
-
-    public Project updateProject(Project project) {
+    public PersonProjectPosition updatePosition(PersonProjectPosition personprojectposition) {
         return restClient.put()
-                .uri(projectServiceUrl + "/update/project")
+                .uri(projectServiceUrl + "/update/position")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(project)
+                .body(personprojectposition)
                 .retrieve()
-                .body(Project.class);
+                .body(PersonProjectPosition.class);
     }
-
 }
