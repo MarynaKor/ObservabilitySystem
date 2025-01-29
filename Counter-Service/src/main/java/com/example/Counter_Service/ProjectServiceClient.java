@@ -1,9 +1,12 @@
 package com.example.Counter_Service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.Arrays;
 import java.util.List;
 
 //constructed after that but I needed a parameter url to be able to change that easily
@@ -34,16 +37,31 @@ public class ProjectServiceClient {
                 .retrieve()
                 .body(Project.class);//arbeite mit stream
     }
-
-    public List getAllProjects() {
-        return (restClient.get()
-                .uri(projectServiceUrl + "/projects")
-                .retrieve()
-                .body(List.class));
+    // first array maybe later a List
+    public List<Project> getAllProjects() {
+         Project[] projects = restClient.get()
+                        .uri(projectServiceUrl + "/projects")
+                        .retrieve()
+                        .body(Project[].class);
+        assert projects != null;
+        return Arrays.asList(projects);
 
     }
 
-/*    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
+    public Project updateProject(Project project) {
+        return restClient.put()
+                .uri(projectServiceUrl + "/update/project")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(project)
+                .retrieve()
+                .body(Project.class);
+    }
+    /*
+            .bodyValue(project)
+                .retrieve()
+                .bodyToMono(Project.class);
+
+    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
         return webClient.get()
                 .uri(projectServiceUrl + "/projects")
                 .retrieve()

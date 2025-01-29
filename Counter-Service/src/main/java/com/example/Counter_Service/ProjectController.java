@@ -5,10 +5,9 @@ import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.StringBuilder.*;
@@ -27,22 +26,42 @@ public class ProjectController {
         Project projectById = projectServiceClient.getProjectById(projectId);
         return "Amount of active days in the project: " + projectById.countedDaysFromTheBeginning() + " in the Project:  " + projectById.getTitle();
     }
+    //Objekt ausgeben and look up hash map
 
     @GetMapping("/counter/projects")
     public String getAllProjects() {
-        List<Project> projects = projectServiceClient.getAllProjects();
-        return "Amount of active days in the project: " + projects.stream().map(Project::countedDaysFromTheBeginning) + " in the Project:  " + projects.stream().map(Project::getTitle);
+        List<Project> projects =  projectServiceClient.getAllProjects();
+        /*HashMap<Integer, Long> projectCountedDays = new HashMap<>();
+        projects.forEach(project -> projectCountedDays.put(project.getId(),project.countedDaysFromTheBeginning()));
+        */
+        String response = "";
+        for (Project project : projects) {
+           response =  response.concat("Amount of active days in the project: " + project.countedDaysFromTheBeginning() + " in the Project:  " + project.getId());
+        }
+
+        //projects.forEach(project -> response.concat("Amount of active days in the project: " + project.countedDaysFromTheBeginning() + " in the Project:  " + project.getId()));
+        return response;
     }
-}
-    //change return type to project
-   /* @GetMapping("/overwrite/{projectId}")
-    public Mono<Project> getAndUpdateProject(@PathVariable Integer projectId) {
+    @GetMapping("/overwrite/{projectId}")
+    public Project getAndUpdateProject(@PathVariable Integer projectId) {
         Project projectUpdate = projectServiceClient.getProjectById(projectId);
-        long newActiveDays = projectServiceClient.getNewDaysAmount(projectId);
-        assert projectUpdate != null;
+        long newActiveDays = projectUpdate.countedDaysFromTheBeginning();
         projectUpdate.setActive_project_days(newActiveDays);
         return projectServiceClient.updateProject(projectUpdate);
     }
+
+    @GetMapping("/overwrite/projects")
+    public List<Project> getAndUpdateProjects(){
+        List<Project> projects = projectServiceClient.getAllProjects();
+        Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
+        List<Project> changedProjects = new ArrayList<>();;
+        for (Integer id : iDS) {
+            changedProjects.add(getAndUpdateProject(id));
+        }
+        return changedProjects;
+    }
+}
+    /*
 
     //Project project
     @GetMapping("/overwrite/projects")
