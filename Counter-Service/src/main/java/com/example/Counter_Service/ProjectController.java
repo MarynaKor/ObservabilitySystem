@@ -1,6 +1,8 @@
 package com.example.Counter_Service;
 
 import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +44,7 @@ public class ProjectController {
     public Project getAndUpdateProject(@PathVariable Integer projectId) {
         Project projectUpdate = projectServiceClient.getProjectById(projectId);
         long newActiveDays = projectUpdate.countedDaysFromTheBeginning();
-        projectUpdate.setActive_project_days(newActiveDays);
+        projectUpdate.setActiveProjectDays(newActiveDays);
         return projectServiceClient.updateProject(projectUpdate);
     }
     /*@GetMapping("/overwrite/position/{positionId}")
@@ -69,6 +71,7 @@ public class ProjectController {
     }
    
     @GetMapping("/overwrite/projects")
+    @EventListener(ApplicationReadyEvent.class)
     public List<Project> getAndUpdateProjects(){
         List<Project> projects = projectServiceClient.getAllProjects();
         Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
@@ -78,7 +81,13 @@ public class ProjectController {
         }
         return changedProjects;
     }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void doSomethingAfterStartup() {
+        System.out.println("hello world, I have just started up");
+    }
 }
+
 
 
 
