@@ -58,14 +58,14 @@ public class ProjectController {
         return positionServiceClient.updatePosition(positionUpdate);
     }
     @GetMapping("/overwrite/positions")
-    public List<Project> getAndUpdatePositions(){
-        List<Project> projects = projectServiceClient.getAllProjects();
-        Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
-        List<Project> changedProjects = new ArrayList<>();
+    public List<PersonProjectPosition> getAndUpdatePositions(){
+        List<PersonProjectPosition> positions = positionServiceClient.getAllPositions();
+        Integer[] iDS = positions.stream().map(PersonProjectPosition::getId).toArray(Integer[]::new);
+        List<PersonProjectPosition> changedPosition = new ArrayList<>();
         for (Integer id : iDS) {
-            changedProjects.add(getAndUpdateProject(id));
+            changedPosition.add(getAndUpdatePosition(id));
         }
-        return changedProjects;
+        return changedPosition;
     }
    
     @GetMapping("/overwrite/projects")

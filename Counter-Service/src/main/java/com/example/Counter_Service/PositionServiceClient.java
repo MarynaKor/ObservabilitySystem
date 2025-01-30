@@ -42,4 +42,13 @@ public class PositionServiceClient {
                 .retrieve()
                 .body(PersonProjectPosition.class);
     }
+    public List<PersonProjectPosition> getAllPositions() {
+        PersonProjectPosition[] positions = restClient.get()
+                .uri(projectServiceUrl + "/positions")
+                .retrieve()
+                .body(PersonProjectPosition[].class);
+        assert positions != null;
+        return Arrays.asList(positions);
+
+    }
 }
