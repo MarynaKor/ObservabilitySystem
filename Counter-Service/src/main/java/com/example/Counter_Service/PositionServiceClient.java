@@ -42,6 +42,8 @@ public class PositionServiceClient {
                 .retrieve()
                 .body(PersonProjectPosition.class);
     }
+
+
     public List<PersonProjectPosition> getAllPositions() {
         PersonProjectPosition[] positions = restClient.get()
                 .uri(projectServiceUrl + "/positions")

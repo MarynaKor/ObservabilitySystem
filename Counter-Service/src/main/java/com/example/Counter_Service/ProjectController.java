@@ -1,5 +1,7 @@
 package com.example.Counter_Service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,11 +18,20 @@ import java.util.List;
 public class ProjectController {
     private final ProjectServiceClient projectServiceClient;
     private final PositionServiceClient positionServiceClient;
+    private Counter ProjectCounter;
+    private Counter PositionCounter;
 
-    public ProjectController(ProjectServiceClient projectServiceClient, ProjectInfoAutoConfiguration projectInfoAutoConfiguration, PositionServiceClient positionServiceClient) {
+    public ProjectController(ProjectServiceClient projectServiceClient, ProjectInfoAutoConfiguration projectInfoAutoConfiguration, PositionServiceClient positionServiceClient, MeterRegistry registry) {
         this.projectServiceClient = projectServiceClient;
         this.positionServiceClient = positionServiceClient;
+        this.ProjectCounter =  Counter.builder("update_project_in_total").
+                description("How many projects were changed and incremented").
+                register(registry);
+        this.PositionCounter =  Counter.builder("update_position_in_total").
+                description("How many positions were changed and incremented").
+                register(registry);
     }
+
 
     @GetMapping("/counter/{projectId}")
     public String createProject(@PathVariable Integer projectId) {
@@ -60,11 +71,13 @@ public class ProjectController {
         return positionServiceClient.updatePosition(positionUpdate);
     }
     @GetMapping("/overwrite/positions")
+    @EventListener(ApplicationReadyEvent.class)
     public List<PersonProjectPosition> getAndUpdatePositions(){
         List<PersonProjectPosition> positions = positionServiceClient.getAllPositions();
         Integer[] iDS = positions.stream().map(PersonProjectPosition::getId).toArray(Integer[]::new);
         List<PersonProjectPosition> changedPosition = new ArrayList<>();
         for (Integer id : iDS) {
+            PositionCounter.increment();
             changedPosition.add(getAndUpdatePosition(id));
         }
         return changedPosition;
@@ -77,6 +90,7 @@ public class ProjectController {
         Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
         List<Project> changedProjects = new ArrayList<>();
         for (Integer id : iDS) {
+            ProjectCounter.increment();
             changedProjects.add(getAndUpdateProject(id));
         }
         return changedProjects;
