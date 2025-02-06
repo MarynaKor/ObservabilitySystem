@@ -1,11 +1,11 @@
 services:
-  backend:
+  counter:
     build: .
     container_name: counter
     ports:
     - '8082:8082'
-
+    networks:
+      - projectsbcxp_my_external_network
 networks:
-  network1:
-    name: my_external_network
+  projectsbcxp_my_external_network :
     external: true
