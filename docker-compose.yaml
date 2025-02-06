@@ -1,28 +1,28 @@
 services:
-  alloy:
-    image: grafana/alloy:latest
-    ports:
-      - 12345:12345
-    volumes:
-      - ./config.alloy:/etc/alloy/config.alloy
-      - ./logfile.log:/tmp/app-logs/
-    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-    depends_on:
-      - loki
-  #prometheus:
-  #    image: prom/prometheus:v2.44.0
-   #   container_name: prometheus
-   #   ports:
-   #     - "9090:9090"
-   #   volumes:
-   #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  loki:
-    image: grafana/loki:main
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml
-    command: -config.file=/etc/loki/local-config.yaml
+  #alloy:
+  #  image: grafana/alloy:latest
+  #  ports:
+  #    - 12345:12345
+  #  volumes:
+  #    - ./config.alloy:/etc/alloy/config.alloy
+  #    - ./logs:/tmp/app-logs/
+  #  command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+  #  depends_on:
+  #    - loki
+  prometheus:
+      image: prom/prometheus:v2.44.0
+      container_name: prometheus
+      ports:
+        - "9090:9090"
+      volumes:
+        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #loki:
+  #  image: grafana/loki:main
+  #  ports:
+  #    - "3100:3100"
+  #  volumes:
+  #    - ./loki-config.yaml:/etc/loki/local-config.yaml
+  #  command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
         image: grafana/grafana:latest
@@ -31,5 +31,5 @@ services:
           - "3000:3000"
         restart: unless-stopped
         volumes:
-          - ./Counter-Service/grafana:/etc/grafana/provisioning/datasources
+          - ./grafana:/etc/grafana/provisioning/datasources
 
