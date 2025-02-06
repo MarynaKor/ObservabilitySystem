@@ -1,6 +1,6 @@
 
 local.file_match "applogs" {
-    path_targets = [{"__path__" = "./logfile.log"}]
+    path_targets = [{"__path__" = "/tmp/*/*.log"}]
     sync_period = "5s"
 }
 loki.source.file "local_files" {
