@@ -13,3 +13,17 @@ loki.write "local_loki" {
     }
  }
 
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://prometheus:9090/api/prom/push"
+  }
+}
+
+prometheus.scrape "example" {
+  // Collect metrics from the default listen address.
+  targets = [{
+    __address__ = "host.docker.internal:8082",
+  }]
+
+  forward_to = [prometheus.remote_write.default.receiver]
+}

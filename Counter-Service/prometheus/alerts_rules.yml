@@ -1,0 +1,19 @@
+groups:
+- name: Too many Objects get overwritten
+  rules:
+   - alert: LoopOverwork
+     expr: sum(update_project_in_total{job="Counter-Service"}) > 5
+     for: 1m
+     keep_firing_for: 5m
+     labels:
+       severity: warning
+     annotations:
+       summary: Loop is overwriting too many projects
+  #- alert: PrometheusJobMissing
+  #  expr: absent(up{job="prometheus"})
+  #  for: 0m
+  #  labels:
+  #    severity: warning
+  #  annotations:
+  #    summary: Prometheus job missing
+  #    description: "A Prometheus job has disappeared"
