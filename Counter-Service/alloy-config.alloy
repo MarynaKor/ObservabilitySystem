@@ -1,0 +1,29 @@
+
+local.file_match "applogs" {
+    path_targets = [{"__path__" = "/tmp/*/*.log"}]
+    sync_period = "5s"
+}
+loki.source.file "local_files" {
+    targets    = local.file_match.applogs.targets
+    forward_to = [loki.write.local_loki.receiver]
+}
+loki.write "local_loki" {
+    endpoint {
+        url = "http://loki:3100/loki/api/v1/push"
+    }
+ }
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://prometheus:9090/api/prom/push"
+  }
+}
+
+prometheus.scrape "example" {
+  // Collect metrics from the default listen address.
+  targets = [{
+    __address__ = "host.docker.internal:8082",
+  }]
+
+  forward_to = [prometheus.remote_write.default.receiver]
+}
