@@ -1,35 +1,82 @@
 services:
-  #alloy:
-  #  image: grafana/alloy:latest
-  #  ports:
-  #    - 12345:12345
-  #  volumes:
-  #    - ./config.alloy:/etc/alloy/config.alloy
-  #    - ./logs:/tmp/app-logs/
-  #  command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-  #  depends_on:
-  #    - loki
+  
+  postgres:
+    container_name: my_database
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=projects'
+      - 'POSTGRES_USER=project'
+      - 'POSTGRES_PASSWORD=secret'
+    ports:
+      - '5432:5432'
+    volumes:
+      - './ProjectsBCXP/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql'
+    restart: 'always'
+
+
+  backend:
+    build: ./ProjectsBCXP/
+    container_name: backend
+    ports:
+      - '8081:8081'
+    environment:
+      db-url: 'jdbc:postgresql://postgres:5432/projects'
+      db-username: 'project'
+      db-password: 'secret'
+    depends_on:
+      - 'postgres'
+
+  counter:
+    build: ./Counter-Service/
+    container_name: counter
+    ports:
+      - '8082:8082'
+    volumes:
+      - ./Counter-Service/log:/log
+  alloy:
+    image: grafana/alloy:latest
+    ports:
+      - 12345:12345
+    volumes:
+      - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
+      - ./Counter-Service/log:/tmp/app-logs/
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    depends_on:
+      - loki
+
   prometheus:
-      image: prom/prometheus:v2.44.0
-      container_name: prometheus
-      ports:
-        - "9090:9090"
-      volumes:
-        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  #loki:
-  #  image: grafana/loki:main
-  #  ports:
-  #    - "3100:3100"
-  #  volumes:
-  #    - ./loki-config.yaml:/etc/loki/local-config.yaml
-  #  command: -config.file=/etc/loki/local-config.yaml
+    image: prom/prometheus:v2.45.3
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./Counter-Service/prometheus:/etc/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+
+  #alertmanager:
+  #    image: prom/alertmanager:latest
+  #    ports:
+  #      - '9093:9093'
+  #    volumes:
+  #      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #    #restart: always
+  #    networks:
+  #      - projectsbcxp_my_external_network
+
+  loki:
+    image: grafana/loki:main
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./Counter-Service/loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
-        image: grafana/grafana:latest
-        container_name: grafana
-        ports:
-          - "3000:3000"
-        restart: unless-stopped
-        volumes:
-          - ./grafana:/etc/grafana/provisioning/datasources
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./Counter-Service/grafana:/etc/grafana/provisioning/datasources
 
