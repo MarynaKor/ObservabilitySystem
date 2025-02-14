@@ -9,6 +9,17 @@ groups:
        severity: warning
      annotations:
        summary: Loop is overwriting too many projects
+
+   - alert: Overwork in 4 Min
+     expr: sum(update_project_in_total{job="Counter-Service"})[5m]
+       > 5
+     for: 1m
+     keep_firing_for: 5m
+     labels:
+       severity: warning
+     annotations:
+       summary: Loop is overwriting too many projects
+
   #- alert: PrometheusJobMissing
   #  expr: absent(up{job="prometheus"})
   #  for: 0m

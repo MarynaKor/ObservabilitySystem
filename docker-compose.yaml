@@ -33,6 +33,8 @@ services:
       - '8082:8082'
     volumes:
       - ./Counter-Service/log:/log
+    depends_on:
+          - 'backend'
   alloy:
     image: grafana/alloy:latest
     ports:

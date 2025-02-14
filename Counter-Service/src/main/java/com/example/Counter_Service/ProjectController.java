@@ -71,7 +71,7 @@ public class ProjectController {
         return positionServiceClient.updatePosition(positionUpdate);
     }
     @GetMapping("/overwrite/positions")
-    //@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public List<PersonProjectPosition> getAndUpdatePositions(){
         List<PersonProjectPosition> positions = positionServiceClient.getAllPositions();
         Integer[] iDS = positions.stream().map(PersonProjectPosition::getId).toArray(Integer[]::new);
@@ -84,7 +84,7 @@ public class ProjectController {
     }
    
     @GetMapping("/overwrite/projects")
-    //@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public List<Project> getAndUpdateProjects(){
         List<Project> projects = projectServiceClient.getAllProjects();
         Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
