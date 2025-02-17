@@ -25,6 +25,8 @@ services:
       db-password: 'secret'
     depends_on:
       - 'postgres'
+    volumes:
+      - ./log:/log
 
   counter:
     build: ./Counter-Service/
@@ -32,16 +34,19 @@ services:
     ports:
       - '8082:8082'
     volumes:
-      - ./Counter-Service/log:/log
+      - ./log:/log
     depends_on:
           - 'backend'
+
+
   alloy:
     image: grafana/alloy:latest
     ports:
       - 12345:12345
     volumes:
       - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
-      - ./Counter-Service/log:/tmp/app-logs/
+      - ./log:/tmp/app-logs/
+      #- ./ProjectsBCXP/log:/tmp/app-logs/
     command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     depends_on:
       - loki
