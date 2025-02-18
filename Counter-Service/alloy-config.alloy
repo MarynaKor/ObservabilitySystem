@@ -19,10 +19,18 @@ prometheus.remote_write "default" {
   }
 }
 
-prometheus.scrape "example" {
+prometheus.scrape "Counter" {
   // Collect metrics from the default listen address.
   targets = [{
     __address__ = "host.docker.internal:8082",
+  }]
+
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+prometheus.scrape "Backend" {
+  // Collect metrics from the default listen address.
+  targets = [{
+    __address__ = "host.docker.internal:8081",
   }]
 
   forward_to = [prometheus.remote_write.default.receiver]
