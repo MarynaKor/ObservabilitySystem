@@ -10,12 +10,12 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - './ProjectsBCXP/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql'
+      - './Project/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql'
     restart: 'always'
 
 
   backend:
-    build: ./ProjectsBCXP/
+    build: ./Project/
     container_name: backend
     ports:
       - '8081:8081'
@@ -46,7 +46,6 @@ services:
     volumes:
       - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
       - ./log:/tmp/app-logs/
-      #- ./ProjectsBCXP/log:/tmp/app-logs/
     command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     depends_on:
       - loki
@@ -60,15 +59,13 @@ services:
       - ./Counter-Service/prometheus:/etc/prometheus
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
 
-  #alertmanager:
-  #    image: prom/alertmanager:latest
-  #    ports:
-  #      - '9093:9093'
-  #    volumes:
-  #      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-  #    #restart: always
-  #    networks:
-  #      - projectsbcxp_my_external_network
+  alertmanager:
+      image: prom/alertmanager:latest
+      ports:
+        - '9093:9093'
+      volumes:
+        - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      #restart: always
 
   loki:
     image: grafana/loki:main

@@ -13,15 +13,15 @@ route:
 receivers:
   - name: 'Mail Alert'
     email_configs:
-      - smarthost: 'smtp.proton.me:587'
-        auth_username: 'TestAlerting@proton.me'
-        auth_password: "testingAlerts2025!!!"
-        from: 'TestAlerting@proton.me'
+      - smarthost: 'bcxp-de.mail.protection.outlook.com:25'
+        #auth_username: 'TestAlerting@proton.me'
+        #auth_password: "testingAlerts2025!!!"
+        from: 'noreply@bcxp.de'
         to: 'maryna.korovay@bcxp.de'
         send_resolved: true
         text: 'I will be happy once I receive an email!'
 inhibit_rules:
   - source_match:
-      severity: 'critical'
+      severity: 'warning'
     target_match:
       severity: 'warning'
