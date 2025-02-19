@@ -8,6 +8,8 @@ import com.example.projectsbcxp.Projects.impl.data.entities.PersonProjectPositio
 import com.example.projectsbcxp.Projects.impl.data.entities.ProjectEntity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,7 +23,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectInterface projectService;
     private final PersonInterface personService;
-
+    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
 
     @GetMapping
@@ -57,17 +59,20 @@ public class ProjectController {
 
     @GetMapping("/positions")
     List<PersonInProjectTO> getAllActivePositions(){
+        log.info("I'm getting all active Positions in Backend from the Database");
         return personService.getActivePositionsInProject() ;
     }
 
     @PutMapping("/update/project")
     public ProjectsTO updateProjects(@RequestBody ProjectsTO projectsTO){
+        log.info("I'm updating a Project from the Database");
         return projectService.updateProject(projectsTO);
     }
 
     //here
     @PutMapping("/update/position")
     public PersonInProjectTO updatePositions(@RequestBody PersonInProjectTO personInProjectTO){
+        log.info("I'm getting all active Positions in Backend from the Database");
         return personService.updatePosition(personInProjectTO);
     }
 }

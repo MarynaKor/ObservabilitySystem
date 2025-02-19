@@ -2,6 +2,8 @@ package com.example.Counter_Service;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController
 public class ProjectController {
+    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectServiceClient projectServiceClient;
     private final PositionServiceClient positionServiceClient;
     private Counter ProjectCounter;
@@ -73,6 +76,7 @@ public class ProjectController {
     @GetMapping("/overwrite/positions")
     @EventListener(ApplicationReadyEvent.class)
     public List<PersonProjectPosition> getAndUpdatePositions(){
+        log.info("Request to update all Positions");
         List<PersonProjectPosition> positions = positionServiceClient.getAllPositions();
         Integer[] iDS = positions.stream().map(PersonProjectPosition::getId).toArray(Integer[]::new);
         List<PersonProjectPosition> changedPosition = new ArrayList<>();
@@ -86,6 +90,7 @@ public class ProjectController {
     @GetMapping("/overwrite/projects")
     @EventListener(ApplicationReadyEvent.class)
     public List<Project> getAndUpdateProjects(){
+        log.info("Request to update all Projects");
         List<Project> projects = projectServiceClient.getAllProjects();
         Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
         List<Project> changedProjects = new ArrayList<>();

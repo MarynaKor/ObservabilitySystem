@@ -15,7 +15,6 @@ import java.util.List;
 
 @Service
 public class PositionServiceClient {
-
     private final RestClient restClient;
 
     private final String projectServiceUrl;
