@@ -17,14 +17,14 @@ import java.util.List;
 
 
 @RestController
-public class ProjectController {
-    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
+public class CounterController {
+    private static final Logger log = LoggerFactory.getLogger(CounterController.class);
     private final ProjectServiceClient projectServiceClient;
     private final PositionServiceClient positionServiceClient;
-    private Counter ProjectCounter;
-    private Counter PositionCounter;
+    private final Counter ProjectCounter;
+    private final Counter PositionCounter;
 
-    public ProjectController(ProjectServiceClient projectServiceClient, ProjectInfoAutoConfiguration projectInfoAutoConfiguration, PositionServiceClient positionServiceClient, MeterRegistry registry) {
+    public CounterController(ProjectServiceClient projectServiceClient, ProjectInfoAutoConfiguration projectInfoAutoConfiguration, PositionServiceClient positionServiceClient, MeterRegistry registry) {
         this.projectServiceClient = projectServiceClient;
         this.positionServiceClient = positionServiceClient;
         this.ProjectCounter =  Counter.builder("update_project_in_total").

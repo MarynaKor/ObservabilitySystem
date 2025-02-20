@@ -31,6 +31,9 @@ services:
   counter:
     build: ./Counter-Service/
     container_name: counter
+    environment:
+      OTEL_SERVICE_NAME: 'graal-native-example-app'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://collector:4318'
     ports:
       - '8082:8082'
     volumes:
@@ -38,34 +41,43 @@ services:
     depends_on:
           - 'backend'
 
-
-  alloy:
-    image: grafana/alloy:latest
-    ports:
-      - 12345:12345
-    volumes:
-      - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
-      - ./log:/tmp/app-logs/
-    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-    depends_on:
-      - loki
-
-  prometheus:
-    image: prom/prometheus:v2.45.3
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./Counter-Service/prometheus:/etc/prometheus
-    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
-
-  alertmanager:
-      image: prom/alertmanager:latest
-      ports:
-        - '9093:9093'
+  collector:
+      image: otel/opentelemetry-collector-contrib:0.109.0
       volumes:
-        - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-      #restart: always
+        - ./Counter-Service/collector-spring-native-config.yaml:/collector-spring-native-config.yaml
+      command: [ '--config=/collector-spring-native-config.yaml' ]
+      expose:
+        - '4317'
+      ports:
+        - '4317:4317'
+
+  #alloy:
+  #  image: grafana/alloy:latest
+  #  ports:
+  #    - 12345:12345
+  #  volumes:
+  #    - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
+  #    - ./log:/tmp/app-logs/
+  #  command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+  #  depends_on:
+  #    - loki
+
+  #prometheus:
+  #  image: prom/prometheus:v2.45.3
+  #  container_name: prometheus
+  #  ports:
+  #    - "9090:9090"
+  #  volumes:
+  #    - ./Counter-Service/prometheus:/etc/prometheus
+  #  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+#
+  #alertmanager:
+  #    image: prom/alertmanager:latest
+  #    ports:
+  #      - '9093:9093'
+  #    volumes:
+  #      - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #    #restart: always
 
   loki:
     image: grafana/loki:main
