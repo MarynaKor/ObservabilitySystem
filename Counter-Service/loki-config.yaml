@@ -10,10 +10,10 @@ limits_config:
 
 server:
   http_listen_port: 3100
+  grpc_listen_port: 9096
 
 common:
   ring:
-    instance_addr: 0.0.0.0
     kvstore:
       store: inmemory
   replication_factor: 1
