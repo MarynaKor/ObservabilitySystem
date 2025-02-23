@@ -6,13 +6,14 @@ receivers:
       http:
         endpoint: '0.0.0.0:4318'
 
-processors:
-  batch:
+#processors:
+#  batch:
 
 exporters:
   debug:
-  prometheus:
-      endpoint: "localhost:8889"
+    verbosity: detailed
+  #prometheus:
+  #    endpoint: "localhost:8889"
   otlphttp:
     endpoint: "http://loki:3100/otlp"
   otlp:
@@ -26,11 +27,11 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [debug,prometheus]
+      #processors: [batch]
+      exporters: [debug] #,prometheus]
     traces:
       receivers: [otlp]
-      exporters: [debug,otlp]
+      exporters: [debug, otlp]
     logs:
       receivers: [otlp]
       exporters: [debug, otlphttp]
