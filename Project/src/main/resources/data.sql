@@ -1,3 +1,10 @@
+CREATE TABLE t_project (
+                           id SERIAL PRIMARY KEY,
+                           title VARCHAR(255),
+                           description VARCHAR(255)
+);
+
+
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255),

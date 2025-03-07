@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: my_database
+    container_name: postgres
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=projects'
@@ -19,10 +19,6 @@ services:
     container_name: backend
     ports:
       - '8081:8081'
-    environment:
-      db-url: 'jdbc:postgresql://postgres:5432/projects'
-      db-username: 'project'
-      db-password: 'secret'
     depends_on:
       - 'postgres'
     networks:

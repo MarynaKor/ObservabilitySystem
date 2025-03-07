@@ -1,14 +1,14 @@
 groups:
 - name: Too many Objects get overwritten
   rules:
-   - alert: LoopOverwork
-     expr: sum(update_project_in_total{job="Counter-Service"}) > 5
-     for: 1m
-     keep_firing_for: 5m
-     labels:
-       severity: warning
-     annotations:
-       summary: Loop is overwriting too many projects
+#   - alert: LoopOverwork
+#     expr: sum(update_project_in_total{job="Counter-Service"}) > 5
+#     for: 1m
+#     keep_firing_for: 5m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: Loop is overwriting too many projects
 
    - alert: Overwork in 4 Min
      expr: max_over_time(update_project_in_total[5m])-min_over_time(update_project_in_total[5m])

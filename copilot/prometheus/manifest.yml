@@ -1,0 +1,31 @@
+# The manifest for the "prometheus" service.
+# Read the full specification for the "Load Balanced Web Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: prometheus
+type: Load Balanced Web Service
+
+# Distribute traffic to your service.
+http:
+  path: 'prometheus'
+  healthcheck:
+    path: '/prometheus'
+    success_codes: '200-499'
+    port: 9090
+    healthy_threshold: 2
+    unhealthy_threshold: 10
+    interval: 10s
+
+# Configuration for your containers and service.
+image:
+  build: Counter-Service\Dockerfile-prometheus
+  port: 9090
+
+cpu: 256
+memory: 512
+count: 1
+exec: true
+network:
+  connect: true
+

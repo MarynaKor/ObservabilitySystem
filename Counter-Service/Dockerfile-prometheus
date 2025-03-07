@@ -1,0 +1,12 @@
+FROM prom/prometheus:v2.45.3
+
+COPY /prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY /prometheus/alerts_rules.yml /etc/prometheus/alerts_rules.yml
+
+EXPOSE 9090
+
+ENTRYPOINT ["prometheus", \
+            "--config.file=/etc/prometheus/prometheus.yml", \
+            "--web.enable-lifecycle", \
+            "--web.route-prefix=/prometheus", \
+            "--web.external-url=http://bt-mko-Publi-GYGXuD0sRXKK-1342114590.eu-central-1.elb.amazonaws.com/prometheus"]

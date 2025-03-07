@@ -1,0 +1,34 @@
+# The manifest for the "grafana" service.
+# Read the full specification for the "Load Balanced Web Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: grafana
+type: Load Balanced Web Service
+
+# Distribute traffic to your service.
+http:
+  path: 'grafana'
+  healthcheck:
+    path: '/grafana'
+    success_codes: '200-499'
+    port: 3000
+    healthy_threshold: 2
+    unhealthy_threshold: 10
+    interval: 10s
+
+# Configuration for your containers and service.
+image:
+  build: Counter-Service\Dockerfile-grafana
+  port: 3000
+
+cpu: 256
+memory: 512
+count: 1
+exec: true
+network:
+  connect: true
+
+variables:
+  GF_SERVER_ROOT_URL: 'http://bt-mko-Publi-GYGXuD0sRXKK-1342114590.eu-central-1.elb.amazonaws.com/grafana/'
+  GF_SERVER_SERVE_FROM_SUB_PATH: 'true'

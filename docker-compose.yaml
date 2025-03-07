@@ -1,54 +1,54 @@
 services:
   
   postgres:
-    container_name: my_database
-    image: 'postgres:latest'
+    container_name: postgres
+    build:
+      context: .
+      dockerfile: ./Project/Dockerfile-postgres
     environment:
       - 'POSTGRES_DB=projects'
       - 'POSTGRES_USER=project'
       - 'POSTGRES_PASSWORD=secret'
     ports:
       - '5432:5432'
-    volumes:
-      - './Project/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql'
     restart: 'always'
 
 
   backend:
-    build: ./Project/
     container_name: backend
+    build:
+      context: .
+      dockerfile: ./Project/Dockerfile
     ports:
       - '8081:8081'
-    environment:
-      db-url: 'jdbc:postgresql://postgres:5432/projects'
-      db-username: 'project'
-      db-password: 'secret'
     depends_on:
       - 'postgres'
     volumes:
       - ./log:/log
 
   counter:
-    build: ./Counter-Service/
+    build:
+      context: .
+      dockerfile: ./Counter-Service/Dockerfile
     container_name: counter
     ports:
       - '8082:8082'
     volumes:
       - ./log:/log
     depends_on:
-          - 'backend'
+      - 'backend'
 
 
-  alloy:
-    image: grafana/alloy:latest
-    ports:
-      - 12345:12345
-    volumes:
-      - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
-      - ./log:/tmp/app-logs/
-    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-    depends_on:
-      - loki
+#  alloy:
+#    image: grafana/alloy:latest
+#    ports:
+#      - 12345:12345
+#    volumes:
+#      - ./Counter-Service/alloy-config.alloy:/etc/alloy/config.alloy
+#      - ./log:/tmp/app-logs/
+#    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+#    depends_on:
+#      - loki
 
   prometheus:
     image: prom/prometheus:v2.45.3
@@ -65,15 +65,15 @@ services:
         - '9093:9093'
       volumes:
         - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-      #restart: always
-
-  loki:
-    image: grafana/loki:main
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./Counter-Service/loki-config.yaml:/etc/loki/local-config.yaml
-    command: -config.file=/etc/loki/local-config.yaml
+      restart: always
+#
+#  loki:
+#    image: grafana/loki:main
+#    ports:
+#      - "3100:3100"
+#    volumes:
+#      - ./Counter-Service/loki-config.yaml:/etc/loki/local-config.yaml
+#    command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
     image: grafana/grafana:latest
@@ -82,7 +82,7 @@ services:
       - "3000:3000"
     restart: unless-stopped
     volumes:
-      - ./Counter-Service/grafana:/etc/grafana/provisioning/datasources
+      - ./Counter-Service/grafana:Lio
       - grafana-storage:/var/lib/grafana
 
 volumes:

@@ -13,13 +13,16 @@ route:
 receivers:
   - name: 'Mail Alert'
     email_configs:
-      - smarthost: 'bcxp-de.mail.protection.outlook.com:25'
-        #auth_username: 'TestAlerting@proton.me'
-        #auth_password: "testingAlerts2025!!!"
-        from: 'noreply@bcxp.de'
-        to: 'maryna.korovay@bcxp.de'
+      - smarthost: 'email-smtp.eu-central-1.amazonaws.com:587'
+        auth_username: 'AKIAYDMDJQK33DL4NZH6'
+        auth_password: 'BFR1LTt5dCMYeOi8vSrkmM0u2Nmowa1Bp8CpVLSrxetH'
+        from: 'maryna.korovay@bcxp.de'
+        to: 'maryna.korovay@byom.de'
         send_resolved: true
+        require_tls: true
         text: 'I will be happy once I receive an email!'
+        headers:
+          subject: "Alert from the cloud setup!"
 inhibit_rules:
   - source_match:
       severity: 'warning'
