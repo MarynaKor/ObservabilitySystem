@@ -31,6 +31,7 @@ public class ProjectsService implements ProjectInterface {
                 .map(projectsMapper::fromEntity)
                 .toList();
     }
+
     @Override
     public ProjectEntity addProject(ProjectsTO projectsTO) {
         ProjectEntity newProject = projectsMapper.toEntity(projectsTO);
@@ -38,7 +39,7 @@ public class ProjectsService implements ProjectInterface {
         return newProject;
     }
 
-    // change it to projectsTO return
+    //Update some fields in the Project Entity
     @Override
     public ProjectsTO updateProject(ProjectsTO projectsTO){
         ProjectEntity projectToUpdate = projectRepository.findById(projectsTO.id()).orElseThrow();
@@ -47,12 +48,7 @@ public class ProjectsService implements ProjectInterface {
         projectRepository.save(projectToUpdate);
         return projectsMapper.fromEntity(projectToUpdate);
 
-        /*
-        PersonProjectPositionEntity personPositionById = personInProjectRepo.findById(personInProjectTO.id()).orElseThrow();
-        personPositionById.setDaysActive(personInProjectTO.daysActive());
-        personInProjectRepo.save(personPositionById);
-        return personMapper.fromPositionEntity(personPositionById);
-         */
+
     }
 
     @Override

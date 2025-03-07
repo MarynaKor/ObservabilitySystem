@@ -1,6 +1,8 @@
 package com.example.Counter_Service;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,19 +15,26 @@ import java.util.List;
 //https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/html/boot-features-webclient.html
 //https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/web-reactive.html#webflux-client-retrieve
 
+@Slf4j
 @Service
+@Configuration
 public class ProjectServiceClient {
 
-    private final RestClient restClient;
 
+   /* @Bean
+    public RestClient restClient(){
+      return RestClient.create();
+    }*/
+
+    private final RestClient restClient;
     private final String projectServiceUrl;
 
-    RestClient defaultClient = RestClient.create();
 
     public ProjectServiceClient(RestClient.Builder restClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
-        this.restClient = restClientBuilder.baseUrl(projectServiceUrl).build();
+        this.restClient = restClientBuilder.baseUrl(projectServiceUrl).defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE).build();
         this.projectServiceUrl = projectServiceUrl;
     }
+
 
     public Project getProjectById(Integer projectId) {
         return restClient.get()
@@ -44,7 +53,7 @@ public class ProjectServiceClient {
         return Arrays.asList(projects);
 
     }
-
+    @Bean
     public Project updateProject(Project project) {
         return restClient.put()
                 .uri(projectServiceUrl + "/update/project")

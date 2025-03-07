@@ -27,11 +27,13 @@ scrape_configs:
   #      labels:
   #        application: 'My Counter Application'
 
-  - job_name: "otel"
+  - job_name: "otel-collector"
     scrape_interval: 5s
     static_configs:
-     - targets: [ "otel:8889" ]
-     - targets: [ "otel:8888" ] #this port is for the collector itself since we need make sure it's running ok
+     - targets: [ "otel-collector:8889" ]
+     - targets: [ "otel-collector:8888" ]
+       labels:
+          application: 'OtelMetric' #this port is for the collector itself since we need make sure it's running ok
 ##
   #- job_name: "Backend_Service"
   #  metrics_path: '/actuator/prometheus'

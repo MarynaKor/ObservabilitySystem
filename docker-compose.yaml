@@ -25,19 +25,14 @@ services:
       db-password: 'secret'
     depends_on:
       - 'postgres'
-    volumes:
-      - ./log:/log
 
   counter:
     build: ./Counter-Service/
     container_name: counter
     #environment:
-      #OTEL_SERVICE_NAME: 'graal-native-example-app'
-      #OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4318'
+      #OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4318' es it schon in der application properties
     ports:
       - '8082:8082'
-    #volumes:
-    #  - ./log:/log
     depends_on:
         - backend
         - otel-collector
@@ -53,6 +48,8 @@ services:
       ports:
         - '4317:4317' #grpc
         - '4318:4318' #http
+        - '8888:8888'
+        - '8889:8889'
       depends_on:
         - loki
 
@@ -61,7 +58,7 @@ services:
     image: prom/prometheus:v2.45.3
     container_name: prometheus
     ports:
-      - '9091:9090'
+      - '9090:9090'
     volumes:
       - ./Counter-Service/prometheus:/etc/prometheus
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
