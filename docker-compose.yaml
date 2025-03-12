@@ -39,7 +39,7 @@ services:
 
 
   otel-collector:
-      image: otel/opentelemetry-collector-contrib:0.109.0
+      image: otel/opentelemetry-collector-contrib:0.121.0
       volumes:
         - ./Counter-Service/collector-spring-native-config.yaml:/etc/otel/config.yaml
       command: [ '--config=/etc/otel/config.yaml' ]
@@ -62,14 +62,14 @@ services:
     volumes:
       - ./Counter-Service/prometheus:/etc/prometheus
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
-#
-  #alertmanager:
-  #    image: prom/alertmanager:latest
-  #    ports:
-  #      - '9093:9093'
-  #    volumes:
-  #      - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-  #    #restart: always
+
+  alertmanager:
+      image: prom/alertmanager:latest
+      ports:
+        - '9093:9093'
+      volumes:
+        - ./Counter-Service/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      #restart: always
 
   loki:
     image: grafana/loki:main

@@ -100,7 +100,7 @@ public class CounterController {
     @Bean
     public List<Project> getAndUpdateProjects(){
         log.info("Request to update all Projects");
-        tracer.spanBuilder("updatingProjects");
+        //tracer.spanBuilder("updatingProjects");
         List<Project> projects = projectServiceClient.getAllProjects();
         Integer[] iDS = projects.stream().map(Project::getId).toArray(Integer[]::new);
         List<Project> changedProjects = new ArrayList<>();

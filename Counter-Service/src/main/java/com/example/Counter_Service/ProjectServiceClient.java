@@ -21,10 +21,10 @@ import java.util.List;
 public class ProjectServiceClient {
 
 
-   /* @Bean
+    @Bean
     public RestClient restClient(){
       return RestClient.create();
-    }*/
+    }
 
     private final RestClient restClient;
     private final String projectServiceUrl;
@@ -37,7 +37,7 @@ public class ProjectServiceClient {
 
 
     public Project getProjectById(Integer projectId) {
-        return restClient.get()
+        return this.restClient.get()
                 .uri(projectServiceUrl + "/project/" + projectId)
                 .retrieve()
                 .body(Project.class);//arbeite mit stream
@@ -45,7 +45,7 @@ public class ProjectServiceClient {
 
     // first array maybe later a List
     public List<Project> getAllProjects() {
-        Project[] projects = restClient.get()
+        Project[] projects = this.restClient.get()
                 .uri(projectServiceUrl + "/projects")
                 .retrieve()
                 .body(Project[].class);
@@ -55,7 +55,7 @@ public class ProjectServiceClient {
     }
     @Bean
     public Project updateProject(Project project) {
-        return restClient.put()
+        return this.restClient.put()
                 .uri(projectServiceUrl + "/update/project")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(project)

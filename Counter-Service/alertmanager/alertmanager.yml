@@ -24,4 +24,4 @@ inhibit_rules:
   - source_match:
       severity: 'warning'
     target_match:
-      severity: 'warning'
+      severity: 'warning't5

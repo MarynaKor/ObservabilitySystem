@@ -2,7 +2,7 @@ groups:
 - name: Too many Objects get overwritten
   rules:
    - alert: LoopOverwork
-     expr: sum(update_project_in_total{job="Counter-Service"}) > 5
+     expr: sum(update_project_in_total{job="Counter-Service"}) > 5sum(update_project_in_total{job="Counter-Service"}) > 5
      for: 1m
      keep_firing_for: 5m
      labels:
