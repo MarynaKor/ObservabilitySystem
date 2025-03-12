@@ -1,0 +1,18 @@
+Now we need to run maven clean and install first.
+Make a snapshot, with this you should be able to build the image of the project 
+as soon as the image is done you can start the builder
+-- docker compose -f docker-compose.yaml build
+
+and now run the compose file
+
+-- docker compose -f docker-compose.yaml up
+
+Next To-Do's
+- create a field "starting date" for Projects -- done
+- create a field for how many days it is running -- done
+- create get function for the starting date by id and only the active ones and create also a get function for the dates
+- inform yourself how to create microservice which communicates with the application
+- also create new Entity Person -- done
+- combine those two -- done
+- copy the nginx from the SpringApp and test it if it works on yours...-- does not work :( what to do ? create your own frontend?
+

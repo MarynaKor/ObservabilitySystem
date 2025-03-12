@@ -1,83 +1,66 @@
 package com.example.Counter_Service;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
 //constructed after that but I needed a parameter url to be able to change that easily
 //https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/html/boot-features-webclient.html
 //https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/web-reactive.html#webflux-client-retrieve
 
+@Slf4j
 @Service
+@Configuration
 public class ProjectServiceClient {
 
-    private final WebClient webClient;
+
+    @Bean
+    public RestClient restClient(){
+      return RestClient.create();
+    }
+
+    private final RestClient restClient;
     private final String projectServiceUrl;
 
-    public ProjectServiceClient(WebClient.Builder webClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
-        this.webClient= webClientBuilder.baseUrl(projectServiceUrl).build();
-        this.projectServiceUrl = projectServiceUrl;
 
+    public ProjectServiceClient(RestClient.Builder restClientBuilder, @Value("${project.service.url}") String projectServiceUrl) {
+        this.restClient = restClientBuilder.baseUrl(projectServiceUrl).defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE).build();
+        this.projectServiceUrl = projectServiceUrl;
     }
+
 
     public Project getProjectById(Integer projectId) {
-        return webClient.get()
-                .uri(projectServiceUrl + "/" + projectId)
+        return this.restClient.get()
+                .uri(projectServiceUrl + "/project/" + projectId)
                 .retrieve()
-                .bodyToMono(Project.class)
-                .block(); //arbeite mit stream
+                .body(Project.class);//arbeite mit stream
     }
 
-    public Flux<Project> getAllProjects() {
-        return webClient.get()
+    // first array maybe later a List
+    public List<Project> getAllProjects() {
+        Project[] projects = this.restClient.get()
                 .uri(projectServiceUrl + "/projects")
                 .retrieve()
-                .bodyToFlux(Project.class);
+                .body(Project[].class);
+        assert projects != null;
+        return Arrays.asList(projects);
 
     }
-
-    public Iterable<Integer> getAllProjectsIds() throws NoSuchFieldException {
-        return webClient.get()
-                .uri(projectServiceUrl + "/projects")
-                .retrieve()
-                .bodyToFlux(Project.class)
-                .map(Project::getId)
-                .toIterable();
-    }
-
-    public int getProjectsId() {
-        return Objects.requireNonNull(webClient.get()
-                        .uri(projectServiceUrl + "/projects")
-                        .retrieve()
-                        .bodyToFlux(Project.class)
-                        .blockFirst()).getId();
-    }
-    //How to retrieve all the id's and not the first or last one
-    //Flux.just(new ArrayList<>())
-    //  .flatMap(Flux::fromIterable); and save in a array[]
-
-    public long getNewDaysAmount(Integer projectId) {
-        return Objects.requireNonNull(webClient.get()
-                        .uri(projectServiceUrl + "/" + projectId)
-                        .retrieve()
-                        .bodyToMono(Project.class)
-                        .block())
-                .countedDaysFromTheBeginning();
-
-        //arbeite mit stream
-    }
-
-    public Mono<Project> updateProject(Project project){
-        return webClient.put()
+    @Bean
+    public Project updateProject(Project project) {
+        return this.restClient.put()
                 .uri(projectServiceUrl + "/update/project")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(project)
+                .body(project)
                 .retrieve()
-                .bodyToMono(Project.class);
+                .body(Project.class);
     }
+
 }
